@@ -1,0 +1,21 @@
+@charset "utf-8";
+table thead tr th{
+	text-align: center;
+	font-size: 20px;
+}
+
+table tbody tr td{
+	font-size: 18px;
+	line-height: 30px;
+	height: 30px;
+	text-align: center;
+}
+
+.ops{
+	width: 400px;
+	text-align: center;
+}
+
+.ops a{
+	margin-left: 25px;
+}

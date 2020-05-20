@@ -1,0 +1,33 @@
+@charset "utf-8";
+.tab-content{
+	margin: 50px;
+}
+
+.tab-content p{
+	font-size: 22px;
+	font-family: "楷体";
+}
+
+.tab-content blockquote{
+	font-family: "仿宋";
+	font-size: 15px;
+	padding: 15px;
+}
+
+.img-container{
+	text-align: center;
+}
+
+.table{
+	font-size: 20px;
+	text-align: center;
+	margin: 35px auto;
+}
+
+.table table{
+	margin: 0 auto;
+}
+
+.table table th{
+	text-align: center;
+}
