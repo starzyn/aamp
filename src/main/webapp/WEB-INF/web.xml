@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+<web-app>
 
   <welcome-file-list>
     <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>
 
-<!--  加载 spring 配置文件-->
+  <jsp-config>
+    <jsp-property-group>
+      <description>JS Encoding</description>
+      <display-name>JS Encoding</display-name>
+      <url-pattern>*.js</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
+
+<!--      <description>CSS Encoding</description>-->
+<!--      <display-name>CSS Encoding</display-name>-->
+<!--      <url-pattern>*.css</url-pattern>-->
+<!--      <page-encoding>UTF-8</page-encoding>-->
+    </jsp-property-group>
+  </jsp-config>
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:applicationContext.xml</param-value>

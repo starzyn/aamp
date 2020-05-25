@@ -31,9 +31,25 @@
 <!--        <property name="characterEncoding" value="UTF-8"/>-->
 <!--        <property name="suffix" value=".html" />-->
 <!--    </bean>-->
-
-    <!-- 设置配置方案 -->
-    <mvc:annotation-driven />
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <!-- 配置Fastjson支持 -->
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json</value>
+                    </list>
+                </property>
+                <property name="features">
+                    <list>
+                        <value>WriteMapNullValue</value><!--是否输出值为null的字段,默认为false -->
+                        <value>QuoteFieldNames</value><!--输出key时是否使用双引号,默认为true -->
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <!--  配置Spring mvc + jsp 的视图解析器  -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -41,12 +57,15 @@
         <property name="order" value="1" />
     </bean>
 
-
 <!-- 设置静态资源放行   -->
-    <mvc:resources location="classpath:/css/" mapping="/css/**"/>
-    <mvc:resources mapping="/fonts/**" location="classpath:/fonts/" />
-    <mvc:resources mapping="/images/**" location="classpath:/images/" />
-    <mvc:resources mapping="/js/**" location="classpath:/js/" />
-    <mvc:resources mapping="/pdfs/**" location="classpath:/pdfs/" />
-
+<!--    <mvc:resources location="classpath:/css/" mapping="/css/**"/>-->
+<!--    <mvc:resources mapping="/fonts/**" location="classpath:/fonts/" />-->
+<!--    <mvc:resources mapping="/images/**" location="classpath:/images/" />-->
+<!--    <mvc:resources mapping="/js/**" location="classpath:/js/" />-->
+<!--    <mvc:resources mapping="/pdfs/**" location="classpath:/pdfs/" />-->
+    <bean id="validateCodeFactory" class="com.starzyn.ValidateCodeFactory" scope="singleton">
+        <constructor-arg name="width" value="80" />
+        <constructor-arg name="height" value="40" />
+        <constructor-arg name="num" value="4" />
+    </bean>
 </beans>

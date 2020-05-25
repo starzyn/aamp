@@ -11,13 +11,15 @@ import com.starzyn.dao.TeacherDao;
 import com.starzyn.entity.Teacher;
 import com.starzyn.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TeacherServiceImp implements TeacherService {
     @Autowired
     private TeacherDao td;
 
     @Override
     public Teacher login(String username, String password) {
-        return null;
+        return td.queryByUsernameAndPwd(username,password);
     }
 }

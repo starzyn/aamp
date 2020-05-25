@@ -36,8 +36,8 @@ public interface StudentDao {
      * @Description 通过用户名来查询用户，主要用来注册时的检查用户名
      * @Date 8:56 2020/5/20
      * @Param [username]
-     * @return com.starzyn.entity.Student
+     * @return com.starzyn.entity.Student[]
      **/
-    Student queryByUsername(String username);
+    Student[] queryByUsername(String username);
 
 }

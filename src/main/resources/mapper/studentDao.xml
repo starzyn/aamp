@@ -12,4 +12,8 @@
     <select id="queryByUsernameAndPwd" resultType="com.starzyn.entity.Student">
         SELECT <include refid="stuInfo" /> FROM student WHERE student_username = #{username} AND student_password = #{password};
     </select>
+    
+    <select id="queryByUsername" resultType="com.starzyn.entity.Student">
+        SELECT <include refid="stuInfo" /> FROM student WHERE student_username = #{username};
+    </select>
 </mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starzyn.dao.TeacherDao">
+
+    <sql id="teaInfo">teacher_id,teacher_username,teacher_password,teacher_sex,teacher_name,teacher_acdemic </sql>
+
+    <select id="queryById" parameterType="int" resultType="com.starzyn.entity.Teacher">
+        SELECT <include refid="teaInfo" /> FROM teacher WHERE student_id = #{id};
+    </select>
+
+    <select id="queryByUsernameAndPwd" resultType="com.starzyn.entity.Teacher">
+        SELECT <include refid="teaInfo" /> from teacher WHERE teacher_username=#{arg0} AND teacher_password=#{arg1};
+    </select>
+</mapper>

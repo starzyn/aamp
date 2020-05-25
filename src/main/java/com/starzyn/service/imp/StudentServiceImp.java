@@ -11,8 +11,6 @@ import com.starzyn.dao.StudentDao;
 import com.starzyn.entity.Student;
 import com.starzyn.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service("studentService")
@@ -20,6 +18,15 @@ public class StudentServiceImp implements StudentService {
 
     @Autowired
     private StudentDao sd;
+
+    @Override
+    public Student[] checkEmail(String username) {
+        Student[] s = sd.queryByUsername(username);
+        //如果查询到结果
+        if(s!=null) return s;
+        //如果没有查询到结果
+        return null;
+    }
 
     @Override
     public Student login(String username, String password) {
@@ -31,8 +38,8 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public boolean regist(String username, String password) {
-        return false;
+    public Student regist(String username, String password) {
+        return null;
     }
 
 }
