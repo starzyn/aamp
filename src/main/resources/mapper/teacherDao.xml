@@ -2,11 +2,84 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starzyn.dao.TeacherDao">
-
+<!--   查询论文类型分布 -->
+    <select id="queryTypes" parameterType="int" resultType="map">
+        select paper_type paperType, count(p.paper_id) counts
+        from paper_manager pm,paper p
+        where teacher_id=#{tid} and pm.paper_id=p.paper_id GROUP BY paper_type;
+    </select>
+<!--  查询未提交的学生信息  -->
+    <select id="queryUnSubmitStudents" parameterType="int" resultType="com.starzyn.entity.Student">
+        SELECT * from student where student_id in(
+            select pm.student_id from paper p,paper_manager pm
+            where pm.teacher_id=#{tid}
+            and pm.paper_id=p.paper_id
+            and submit_time > (
+                SELECT end_time from `require` r,teacher_require tr
+                where r.require_id = tr.require_id and tr.teacher_id=#{tid}
+                )
+        );
+    </select>
+<!--  查询提交人数按时间  -->
+    <select id="querySubmit" parameterType="int" resultType="com.starzyn.dto.Submit">
+        SELECT start_time start,end_time end,submit_time,count(paper_id) submitTimes
+        from paper,`require` r,teacher_require tr
+        where tr.teacher_id = #{tid} and tr.require_id=r.require_id
+        and paper_id in (SELECT paper_id from paper_manager where teacher_id=#{tid})
+        GROUP BY submit_time;
+    </select>
+<!--  更新评语  -->
+    <update id="updateCheck" parameterType="com.starzyn.entity.Check">
+        UPDATE `check` set check_status=#{checkStatus},check_content=#{checkContent} where check_id=#{checkId};
+    </update>
+    <select id="queryCheck" parameterType="int" resultType="com.starzyn.entity.Check">
+        select check_id,check_status,check_content from `check` where check_id=#{cid};
+    </select>
+<!--  通过论文id来查询论文的路径，方便展示  -->
+    <select id="queryPaperPath" parameterType="int" resultType="map">
+        select paper_path,paper_title from paper where paper_id=#{pid};
+    </select>
+<!-- 查询检查论文的各项信息   -->
+    <select id="queryCheckDetail" parameterType="int" resultType="com.starzyn.dto.CheckDetail">
+        select pm.paper_id,pm.student_id,c.check_id,s.student_name,s.class_num,p.paper_title,p.paper_type,c.check_status
+        from check_manager cm, `check` c,student s,paper_manager pm,paper p
+        where cm.check_id=c.check_id
+        and cm.student_id=s.student_id
+        and pm.paper_id=p.paper_id
+        and pm.student_id=s.student_id
+        and s.student_id in(
+            select student_id
+            from student_manager
+            where teacher_id=#{tid})
+        and pm.teacher_id=#{tid}
+        and cm.teacher_id=#{tid};
+    </select>
+<!-- 教师公共字段 -->
     <sql id="teaInfo">teacher_id,teacher_username,teacher_password,teacher_sex,teacher_name,teacher_acdemic </sql>
-
+<!-- 学生公共字段   -->
+    <sql id="stuInfo">student_id,student_username,student_password, student_sex, remark,user_img,school,acdemic,major,class_num, student_num,student_name </sql>
+<!-- 删除教师和学生之间的关系   -->
+    <delete id="delStudent">
+        DELETE FROM student_manager where student_id=#{sid} and teacher_id=#{tid};
+    </delete>
+<!--  向学生管理表中添加数据  -->
+    <insert id="addStudent">
+        INSERT INTO student_manager(student_id,teacher_id) VALUES(#{sid},#{tid});
+    </insert>
+<!--  通过教师id来查询所管理的学生信息  -->
+    <select id="queryStudentsByTid" parameterType="int" resultType="com.starzyn.entity.Student">
+    select <include refid="stuInfo" /> from student where student_id in (SELECT student_id from student_manager where teacher_id=#{tid});
+    </select>
+    <update id="update" parameterType="com.starzyn.entity.Teacher">
+        UPDATE teacher set
+        teacher_sex=#{teacherSex},
+        teacher_name=#{teacherName},
+        teacher_acdemic=#{teacherAcdemic}
+        where teacher_id=#{teacherId};
+    </update>
+    
     <select id="queryById" parameterType="int" resultType="com.starzyn.entity.Teacher">
-        SELECT <include refid="teaInfo" /> FROM teacher WHERE student_id = #{id};
+        SELECT <include refid="teaInfo" /> FROM teacher WHERE teacher_id = #{id};
     </select>
 
     <select id="queryByUsernameAndPwd" resultType="com.starzyn.entity.Teacher">

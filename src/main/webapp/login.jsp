@@ -5,26 +5,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>登录</title>
     <link rel="icon" href="${pageContext.request.contextPath}/favicon.png" type="image/x-ico">
-    <link type="text/css" rel="stylesheet" href="css/login.css" />
-    <link href="css/style.min.css" rel="stylesheet">
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/reg-login.js" charset="UTF-8"></script>
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css" />
+    <link href="${pageContext.request.contextPath}/css/style.min.css" rel="stylesheet">
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/reg-login.js" charset="UTF-8"></script>
 </head>
 
 <body>
 <div class="main">
     <div class="main0">
         <div class="main_left">
-            <img src="images/login-image-3.png" class="theimg"/>
-            <img src="images/login-image-2.png" class="secimg"/>
-            <img src="images/login-image-1.png" class="firimg"/>
+            <img src="${pageContext.request.contextPath}/images/login-image-3.png" class="theimg"/>
+            <img src="${pageContext.request.contextPath}/images/login-image-2.png" class="secimg"/>
+            <img src="${pageContext.request.contextPath}/images/login-image-1.png" class="firimg"/>
         </div>
         <div class="main_right">
             <div class="main_r_up">
-                <img src="images/user.png" />
+                <img src="${pageContext.request.contextPath}/images/user.png" />
                 <div class="pp">登录</div>
             </div>
-            <div class="sub"><p>还没有账号？<a href="register.jsp"><span class="blue">立即注册</span></a></p></div>
+            <div class="sub"><p>还没有账号？<a href="${pageContext.request.contextPath}/register.jsp"><span class="blue">立即注册</span></a></p></div>
             <form action="${pageContext.request.contextPath}/loginForm.action" method="post" onsubmit="return checkLogin()">
                 <div class="txt">
                     <span style="letter-spacing:8px;">用户名:</span>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="xieyi">
                     <input name="rememberMe" type="checkbox" value="yes"/>记住我
-                    <a href="password.html"><span class="blue" style=" padding-left:130px; cursor:pointer">忘记密码?</span></a>
+                    <a href="password.jsp"><span class="blue" style=" padding-left:130px; cursor:pointer">忘记密码?</span></a>
                 </div>
                 <input id="login" class="xiayibu" type="submit" value="登录">
 <%--                <input id="login" class="xiayibu" type="button" value="登录" onclick="checkCode('aaaa')">--%>

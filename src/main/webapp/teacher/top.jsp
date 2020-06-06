@@ -15,9 +15,14 @@
             </div>
 
             <ul class="topbar-right">
-                <li class="">
-                    <img class="img-avatar img-avatar-48 m-r-10" src="../images/users/avatar.jpg" alt="" />
-                    <span>${t.teacherName} <span class="caret"></span></span>
+                <li class="dropdown dropdown-profile">
+                    <a href="javascript:void(0)" data-toggle="dropdown">
+                        <img class="img-avatar img-avatar-48 m-r-10" src="${pageContext.request.contextPath}/static/imgs/avatar.jpg" />
+                        <span>${t.teacherName} <span class="caret"></span></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li> <a href="${pageContext.request.contextPath}/teacher/logout.action"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
+                    </ul>
                 </li>
                 <!--切换主题配色-->
                 <li class="dropdown dropdown-skin">

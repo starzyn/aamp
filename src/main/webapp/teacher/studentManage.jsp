@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="zh">
@@ -30,11 +31,11 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <h4 class="modal-title" id="">请输入学生用户名</h4>
+                                            <h4 class="modal-title">请输入学生用户名</h4>
                                         </div>
                                         <form>
                                             <div class="modal-body">
-                                                <input type="text" name="stuUsername"/>
+                                                <input type="text" id="stuUsername" name="stuUsername"/>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -53,6 +54,7 @@
                                             <h4 class="modal-title" id="">查询到学生信息：</h4>
                                         </div>
                                         <form>
+                                            <input type="hidden" id="stuId" />
                                             <div class="modal-body">
                                                 <table class="table-bordered">
                                                     <thead>
@@ -63,17 +65,17 @@
                                                     </thead>
                                                     <tbody>
                                                     <tr>
-                                                        <td>张亚男</td>
-                                                        <td>311609000915</td>
-                                                        <td>计算机科学与技术学院</td>
-                                                        <td>计算机1606</td>
+                                                        <td id="stuName"></td>
+                                                        <td id="stuNum"></td>
+                                                        <td id="stuAcdemic"></td>
+                                                        <td id="stuClass"></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                <button type="button" class="btn btn-success" data-dismiss="modal">添加</button>
+                                                <button type="button" class="btn btn-success" data-dismiss="modal" onclick="addStudent()">添加</button>
                                             </div>
                                         </form>
                                     </div>
@@ -94,17 +96,18 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td>311609000915</td>
-                                            <td>张亚男</td>
-                                            <td>starzyn</td>
-                                            <td>计算机科学与技术学院</td>
-                                            <td>计算机1606</td>
-                                            <td class="ops">
-                                                <a class="btn btn-label btn-warning"><label><i class="mdi mdi-eye"></i></label> 查看</a>
-                                                <a class="btn btn-label btn-danger"><label><i class="mdi mdi-delete"></i></label> 删除</a>
-                                            </td>
-                                        </tr>
+                                        <c:forEach items="${stus}" var="stu">
+                                            <tr>
+                                                <td>${stu.studentNum}</td>
+                                                <td>${stu.studentName}</td>
+                                                <td>${stu.studentUsername}</td>
+                                                <td>${stu.acdemic}</td>
+                                                <td>${stu.classNum}</td>
+                                                <td class="ops">
+                                                    <a class="btn btn-label btn-danger" href="javascript:void(0)" onclick="delStudent(${stu.studentId})"><label><i class="mdi mdi-delete"></i></label> 删除</a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>
@@ -124,8 +127,80 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/main.min.js"></script>
 <script type="text/javascript">
     function query(){
-        var inf = document.getElementById("submitt");
-        inf.setAttribute("data-target","#stuRes");
+        var flag = false;
+        var saveData = JSON.stringify({"stuUsername":$("#stuUsername").val()});
+        $.ajax({
+            url:"/aamp/teacher/queryStudent.action",
+            type:"post",
+            dataType:"json",
+            contentType : "application/json;charset=utf-8",
+            data:saveData,
+            async:false,
+            success:function(data){
+                if(data.studentId==undefined || data.studentId==""){
+                    alert("查询不到该学生的信息！");
+                    flag = false;
+                }else {
+                    $("#stuName").text(data.studentName);
+                    $("#stuNum").text(data.studentNum);
+                    $("#stuAcdemic").text(data.acdemic);
+                    $("#stuClass").text(data.classNum);
+                    $("#stuId").val(data.studentId);
+                    flag = true;
+                }
+            },
+            error:function () {
+                alert("查询不到该学生的信息！");
+                flag = false;
+            }
+        });
+        if(flag){
+            var inf = document.getElementById("submitt");
+            inf.setAttribute("data-target","#stuRes");
+        }
+    }
+
+    function addStudent(){
+        //获取查询到的学生id
+        var saveData = JSON.stringify({"stuId":$("#stuId").val()});
+        $.ajax({
+            url:"/aamp/teacher/addStudent.action",
+            type:"post",
+            dataType:"json",
+            contentType : "application/json;charset=utf-8",
+            data:saveData,
+            async:false,
+            success:function(data){
+                if(data.addMess=="ok"){
+                    alert("添加成功");
+                    location.reload();
+                }
+            },
+            error:function () {
+                alert("添加失败！");
+            }
+        });
+    }
+    
+    function delStudent(sid) {
+        var saveData = JSON.stringify({"sid":sid});
+        $.ajax({
+            url:"/aamp/teacher/delStudent.action",
+            type:"post",
+            dataType:"json",
+            contentType : "application/json;charset=utf-8",
+            data:saveData,
+            async:false,
+            success:function(data){
+                if(data.delMess=="ok"){
+                    alert("删除成功");
+                    location.reload();
+                }
+            },
+            error:function () {
+                alert("删除失败！");
+            }
+        });
     }
 </script>
 </body>

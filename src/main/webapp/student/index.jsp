@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Administrator
@@ -40,7 +41,7 @@
                                     <table class="table table-hover">
                                         <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>~</th>
                                             <th>所属科目</th>
                                             <th>论文名称</th>
                                             <th>论文类型</th>
@@ -52,51 +53,41 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>web 应用</td>
-                                            <td><a href="#">网站重新设计</a></td>
-                                            <td>应用类</td>
-                                            <td>张亚男</td>
-                                            <td>01/03/2019</td>
-                                            <td>12/04/2019</td>
-                                            <td><span class="label label-warning">进行中</span></td>
-                                            <td>
-                                                <div class="progress progress-striped progress-sm">
-                                                    <div class="progress-bar progress-bar-warning" style="width: 30%;"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>前端开发</td>
-                                            <td><a href="#">LOGO设计</a></td>
-                                            <td>综述类</td>
-                                            <td>霍占强</td>
-                                            <td>10/10/2019</td>
-                                            <td>12/12/2019</td>
-                                            <td><span class="label label-danger">未开始</span></td>
-                                            <td>
-                                                <div class="progress progress-striped progress-sm">
-                                                    <div class="progress-bar progress-bar-danger" style="width: 0%;"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>Java SE</td>
-                                            <td><a href="#">java的开发</a></td>
-                                            <td>实验类</td>
-                                            <td>赵宁</td>
-                                            <td>10/02/2019</td>
-                                            <td>01/03/2019</td>
-                                            <td><span class="label label-success">完成</span></td>
-                                            <td>
-                                                <div class="progress progress-striped progress-sm">
-                                                    <div class="progress-bar progress-bar-success" style="width: 100%;"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <c:forEach items="${pcs}" var="pc">
+                                            <tr>
+                                                <td>#</td>
+                                                <td>${pc.paperSubject}</td>
+                                                <td><a href="${pageContext.request.contextPath}/student/paperDetails.action?pid=${pc.paperId}">${pc.paperTitle}</a></td>
+                                                <td>${pc.paperType}</td>
+                                                <td>${pc.teacherName}</td>
+                                                <td>${pc.st}</td>
+                                                <td>${pc.et}</td>
+                                                <c:if test="${pc.checkStatus eq '未批改'}">
+                                                    <td><span class="label label-danger">未开始</span></td>
+                                                    <td>
+                                                        <div class="progress progress-striped progress-sm">
+                                                            <div class="progress-bar progress-bar-danger" style="width: 0%;"></div>
+                                                        </div>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${pc.checkStatus eq '进行中'}">
+                                                    <td><span class="label label-warning">进行中</span></td>
+                                                    <td>
+                                                        <div class="progress progress-striped progress-sm">
+                                                            <div class="progress-bar progress-bar-warning" style="width: 30%;"></div>
+                                                        </div>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${pc.checkStatus eq '批改完成'}">
+                                                    <td><span class="label label-success">已完成</span></td>
+                                                    <td>
+                                                        <div class="progress progress-striped progress-sm">
+                                                            <div class="progress-bar progress-bar-success" style="width: 100%;"></div>
+                                                        </div>
+                                                    </td>
+                                                </c:if>
+                                            </tr>
+                                        </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>

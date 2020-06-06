@@ -1,13 +1,39 @@
 // JavaScript Document
-var countdown=60;
+//实现重发验证码的倒计时按钮功能
+var countdown=0;
+var flagg = 1;
 function settime(val) {
-    if (countdown == 0) {
-        val.removeAttribute("disabled");
-        val.text="获取到短信验证码";
+    if (countdown == 0 && flagg == 1) {
+        //把数据封装成json字符串
+        var saveData = JSON.stringify({"username":$("#username").val()});
+        // alert("saveData:"+saveData);
+        $.ajax({
+            url:"/aamp/sentEmail.action",
+            type:"post",
+            dataType:"json",
+            contentType : "application/json;charset=utf-8",
+            data:saveData,
+            async:false,
+            success:function(data){
+                // alert("======="+data.codeMess);
+                if(data.codeMess=="1")
+                    alert("验证码发送成功请注意查收");
+                else alert("发送失败");
+            },
+            error:function () {
+                alert("网络有问题，请刷新后重试！");
+            }
+        });
+        flagg = 0;
         countdown =60;
-    } else {
-        val.setAttribute("disabled", true);
-        val.text=countdown+"秒后可重新发送";
+        $(".tipTimer").trigger("click");
+    } else if( countdown==0&&flagg==0){
+        val.removeAttribute("disabled");
+        val.innerText="获取到短信验证码";
+        flagg = 1;
+    } else{
+        val.setAttribute("disabled","disabled");
+        val.innerText=countdown+"秒后可重新发送";
         countdown--;
         setTimeout(function() {
             settime(val)
@@ -15,20 +41,21 @@ function settime(val) {
     }
 
 }
-$(function(){
-    $(".tipTimer").trigger("click");
-})
+// $(function(){
+//     $(".tipTimer").trigger("click");
+// })
 
 $(document).ready(function () {
     var height=$(document).height();
     $('.main').css('height',height);
 })
 
+//实现点击更换验证码的功能
 function changeImg(){
     //获取当前时间作为种子
     var time = Date.now().toString();
     //每次点击后
-    $("#validateCode").attr("src","getValidateCode.action?id="+time);
+    $("#validateCode").attr("src","/aamp/getValidateCode.action?id="+time);
 
 }
 
@@ -86,12 +113,14 @@ function checkReg(){
     //通过Ajax进行异步验证验证码的正确性
     var flag;
     flag = checkCode(flag);
+    var flagg = checkEmail();
+    if(flag&&flagg) return true;
     // if(flag == true){//标志位为真，证明验证码输入正确
     //     return true;
     // }else {//标志位为假，证明验证码输入不正确，或者请求失败，都不能提交表单
     //     return false;
     // }
-    return flag;
+    return false;
 }
 
 //检查邮箱的格式是否正确
@@ -112,14 +141,14 @@ function checkEmail() {
         var saveData = JSON.stringify({"email":email});
         // alert("saveData:"+saveData);
         $.ajax({
-            url:"checkEmail.action",
+            url:"/aamp/checkEmail.action",
             type:"post",
             dataType:"json",
             contentType : "application/json;charset=utf-8",
             data:saveData,
             async:false,
             success:function(data){
-                alert(data.emailMess);
+                // alert(data.emailMess);
                 if(data.emailMess=="0"){
                     $("#emailMess").text("该邮箱已经被注册过，请重新输入");
                     flag = false;
@@ -141,7 +170,7 @@ function checkEmail() {
 function checkCode(flag) {
     var saveData = JSON.stringify({"code":$("#inputCode").val()});
     $.ajax({
-        url:"checkCode.action",
+        url:"/aamp/checkCode.action",
         type:"post",
         dataType:"json",
         contentType : "application/json;charset=utf-8",
@@ -165,5 +194,80 @@ function checkCode(flag) {
         }
     });
     // alert("end======" + flag);
+    return flag;
+}
+
+//实现检查注册的时候密码的规则检验
+function checkPwd(){
+    var pwd = $("#password").val().toString().trim();
+    var pattern = /^(?![a-zA-z]$)(?!\d$)(?![!@#$%^&*]$)[a-zA-Z\d!@#$%^&*]{6,12}$/;
+    var res = pattern.test(pwd);
+    if(!res){
+        $("#pwdMess").text("密码不符合要求!");
+        return false;
+    }else {
+        $("#pwdMess").empty();
+        return true;
+    }
+
+}
+
+    //实现确认密码的时候保证密码一致
+    function reCheckPwd(){
+        var pwd = $("#password").val().toString().trim();
+        var repwd = $("#repassword").val().toString().trim();
+        if(pwd==repwd){
+            $("#rePwdMess").empty();
+            return true;
+
+        }else {
+            $("#rePwdMess").text("两次输入的密码不一致!");
+            return false;
+        }
+    }
+
+    //实现注册的最后一步，验证码邮箱验证码的正确性
+function checkLastReg(){
+    if($("#code").val().toString().trim()=="" || $("#code").val()==undefined){
+        alert("请输入邮箱验证码");
+        return false;
+    }
+    var pwdisok = checkPwd();
+    if(!pwdisok){
+        alert("密码不符合要求！");
+        return false;
+    }
+    var repwdisok = reCheckPwd();
+    if(!repwdisok) {
+        alert("密码不一致");
+        return false;
+    }
+
+    //验证邮箱验证码
+    var flag = false;
+    var saveData = JSON.stringify({"code":$("#code").val()});
+    $.ajax({
+        url:"/aamp/checkEmailCode.action",
+        type:"post",
+        dataType:"json",
+        contentType : "application/json;charset=utf-8",
+        data:saveData,
+        async:false,
+        success:function (responseText) {
+            if(responseText.emailCodeMess=="0"){//验证码输入不正确
+                $("#emailCodeMess").text("验证码输入不正确");
+                flag = false;
+                // alert(flag);
+            }else{//验证码输入正确
+                // alert(flag);
+                $("#codeMess").empty();
+                flag = true;
+            }
+        },
+        error:function (){
+            alert("网络出现问题，请刷新后重试");
+            flag = false;
+        }
+    });
     return flag;
 }

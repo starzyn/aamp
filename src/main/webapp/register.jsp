@@ -4,10 +4,10 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>注册</title>
-    <link type="text/css" rel="stylesheet" href="css/zhuce.css" />
-    <link type="text/css" rel="stylesheet" href="css/style.min.css" />
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/reg-login.js" charset="UTF-8"></script>
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/zhuce.css" />
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/style.min.css" />
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/reg-login.js" charset="UTF-8"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             var height=$(document).height();
@@ -20,17 +20,18 @@
 <div class="main">
     <div class="main0">
         <div class="main_left">
-            <img src="images/zhuce-image-3.png" class="theimg"/>
-            <img src="images/zhuce-image-2.png" class="secimg"/>
-            <img src="images/zhuce-image-1.png" class="firimg"/>
+            <img src="${pageContext.request.contextPath}/images/zhuce-image-3.png" class="theimg"/>
+            <img src="${pageContext.request.contextPath}/images/zhuce-image-2.png" class="secimg"/>
+            <img src="${pageContext.request.contextPath}/images/zhuce-image-1.png" class="firimg"/>
         </div>
         <div class="main_right">
             <div class="main_r_up">
-                <img src="images/user.png" />
+                <img src="${pageContext.request.contextPath}/images/user.png" />
                 <div class="pp">注册</div>
             </div>
-            <div class="sub"><p>已经注册？<a href="login.jsp"><span class="blue">请登录</span></a></p></div>
-            <form action="${pageContext.request.contextPath}/sentEmail.action" method="post" onsubmit="return checkReg()">
+            <div class="sub"><p>已经注册？<a href="${pageContext.request.contextPath}/login.jsp"><span class="blue">请登录</span></a></p></div>
+            <form action="${pageContext.request.contextPath}/next.action" method="post" onsubmit="return checkReg()">
+                <input type="hidden" name="target" value="register"/>
                 <div class="txt">
                     <span style="letter-spacing:10px;">邮箱账号:</span>
                     <input id="username" name="username" type="text" class="txtphone" placeholder="请输入邮箱账号" onblur="checkEmail()"/>
@@ -46,7 +47,7 @@
                     <input id="xieyi" name="xieyi" type="checkbox" value="yes" checked="checked"/>
                     我已经阅读并遵守 <span class="blue" style="cursor:pointer">《高系学术成果平台服务协议》</span>
                 </div>
-                <input type="submit"  value="下一步 > " class="xiayibu"/>
+                <input type="submit" value="下一步 > " class="xiayibu"/>
             </form>
         </div>
     </div>

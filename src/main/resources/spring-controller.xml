@@ -68,4 +68,10 @@
         <constructor-arg name="height" value="40" />
         <constructor-arg name="num" value="4" />
     </bean>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="maxInMemorySize" value="10240"/>
+        <property name="maxUploadSize" value="-1"/>
+    </bean>
 </beans>

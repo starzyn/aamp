@@ -20,7 +20,22 @@
   </properties>
 
   <dependencies>
-      <dependency>
+
+    <!-- jstl 标签库 -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-impl -->
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-jstlel</artifactId>
+      <version>1.2.5</version>
+    </dependency>
+
+    <dependency>
           <groupId>javax.servlet</groupId>
           <artifactId>javax.servlet-api</artifactId>
           <version>3.1.0</version>
@@ -174,6 +189,17 @@
       <groupId>com.starzyn</groupId>
       <artifactId>ValidateCode</artifactId>
       <version>1.0-Alpha</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.3.2</version>
     </dependency>
   </dependencies>
 

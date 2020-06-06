@@ -16,16 +16,19 @@ import com.starzyn.service.TeacherService;
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +44,21 @@ public class RegisterAndLogin {
 
     @Autowired
     ValidateCodeFactory vcf;
+
+    /**
+     * @Author starzyn
+     * @Description 修改密码后重新登陆
+     * @Date 14:32 2020/5/29
+     * @Param [request, session]
+     * @return org.springframework.web.servlet.ModelAndView
+     **/
+    @RequestMapping("/reLogin.action")
+    public ModelAndView reLogin(HttpServletRequest request,HttpSession session){
+        String loginPath = request.getContextPath()+ File.separator;
+        session.removeAttribute("s");
+        ModelAndView mav = new ModelAndView("login");
+        return mav;
+    }
 
     /**
      * @author starzyn
@@ -68,8 +86,8 @@ public class RegisterAndLogin {
                     }
 //                    System.out.println(s.toString());
                     session.setAttribute("s",s);
-                    mav.addObject("pageTitle","论文审核情况");
-                    mav.setViewName("student/index");
+                    mav.addObject("pageTitle","个人资料");
+                    mav.setViewName("student/studentInf");
                     return mav;
                 }
                 mav.addObject("loginMess","用户名或密码不正确，请重新输入");
@@ -87,8 +105,8 @@ public class RegisterAndLogin {
                         resp.addCookie(cookie2);
                     }
                     session.setAttribute("t",t);
-                    mav.setViewName("teacher/studentManage");
-                    mav.addObject("pageTitle","学生信息管理");
+                    mav.setViewName("teacher/teacherInf");
+                    mav.addObject("pageTitle","教师个人信息");
                     return mav;
                 }
                 mav.addObject("loginMess","用户名或密码不正确，请重新输入");
@@ -155,8 +173,7 @@ public class RegisterAndLogin {
         if(s.length!=0){
             map.put("emailMess","0");
         }else{
-            //把正确的邮箱存放在session中，方便后面的数据库写入
-            session.setAttribute("email",email);
+//            session.setAttribute("email",email);
             map.put("emailMess","1");
         }
         return map;
@@ -164,17 +181,91 @@ public class RegisterAndLogin {
 
     /**
      * @Author starzyn
-     * @Description 在注册的第一步中，点击下一步进行发送邮箱验证码,并且进入第二步的页面
-     * @Date 16:09 2020/5/25
+     * @Description 在注册的第一步中，接受到注册邮箱，并把它带到下一个页面
+     * @Date 18:27 2020/5/25
      * @Param [username]
      * @return org.springframework.web.servlet.ModelAndView
      **/
-    @RequestMapping("/sentEmail.action")
-    public ModelAndView sentEmail(@RequestParam String username){
-        ModelAndView mav = new ModelAndView("register1");//设置注册的第二步的视图页面
+    @RequestMapping("/next.action")
+    public ModelAndView next(@RequestParam String username,@RequestParam String target){
+        ModelAndView mav = new ModelAndView();
+        //设置注册的第二步的视图页面
+        if("register".equals(target)){
+            mav.setViewName("register1");
+        }else if("password".equals(target)){
+            mav.setViewName("password1");
+        }
         mav.addObject("username",username);
-        String code = sentCode(username);
-        mav.addObject("code",code);
+       return mav;
+    }
+    /**
+     * @Author starzyn
+     * @Description 点击按钮发送邮箱验证码
+     * @Date 18:25 2020/5/25
+     * @Param [username]
+     * @return java.util.Map<java.lang.String,java.lang.String>
+     **/
+    @RequestMapping("/sentEmail.action")
+    @ResponseBody
+    public Map<String,String> sentEmail(@RequestBody Map<String,String> umap,HttpSession session){
+        String email = umap.get("username");
+        System.out.println("email=" + email);
+        String code = sentCode(email);//获取验证码
+        Map<String,String> res = new HashMap<>();
+        if(code!=null) {
+            res.put("codeMess", "1");
+            session.setAttribute("code", code);
+        }
+        return res;
+    }
+
+    /**
+     * @Author starzyn
+     * @Description 采用ajax来异步检查邮箱验证码的正确性
+     * @Date 11:03 2020/5/26
+     * @Param [emap]
+     * @return java.util.Map<java.lang.String,java.lang.String>
+     **/
+    @RequestMapping("/checkEmailCode.action")
+    @ResponseBody
+    public Map<String,String> checkEmailCode(@RequestBody Map<String,String> emap,HttpSession session){
+        String relCode = (String)session.getAttribute("code");
+        String inputCode = emap.get("code");
+        Map<String,String> res = new HashMap<>();
+        if(relCode.equalsIgnoreCase(inputCode)){
+            res.put("emailCodeMess","1");
+        }else {
+            res.put("emailCodeMess","0");
+        }
+        return res;
+    }
+
+    /**
+     * @Author starzyn
+     * @Description 注册功能，最后把用户名和密码写入到数据库
+     * @Date 11:37 2020/5/26
+     * @Param [username, password]
+     * @return org.springframework.web.servlet.View
+     **/
+    @RequestMapping("/register.action")
+    public ModelAndView register(@RequestParam String username,@RequestParam String password){
+        int res = ss.regist(username, password);
+        ModelAndView mav = new ModelAndView("registerSuccess");
+        return mav;
+    }
+
+    /**
+     * @Author starzyn
+     * @Description 修改密码
+     * @Date 21:46 2020/5/28
+     * @Param [code, password, session]
+     * @return org.springframework.web.servlet.ModelAndView
+     **/
+    @RequestMapping("/modifyPwd.action")
+    public ModelAndView modifyPwd(@RequestParam String password, HttpSession session){
+        Student s = (Student)session.getAttribute("s");
+        int res = ss.modifyPassword(s.getStudentUsername(),password);
+        ModelAndView mav = new ModelAndView("password2");
         return mav;
     }
 

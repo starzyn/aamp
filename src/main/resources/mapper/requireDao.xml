@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starzyn.dao.RequireDao">
+<!-- 添加论文需求对象，并且获取当前对象的id   -->
+    <insert id="addRequire" parameterType="com.starzyn.entity.Require" useGeneratedKeys="true" keyProperty="requireId">
+        INSERT INTO `require`(require_subject,requires,start_time,end_time,model_path) VALUES(#{requireSubject},#{requires},#{startTime},#{endTime},#{modelPath});
+    </insert>
+<!-- 根据id来查询论文需求   -->
+    <select id="queryById" parameterType="int" resultType="com.starzyn.entity.Require">
+        SELECT require_id,require_subject,requires,start_time,end_time,model_path from `require` where require_id=#{rid};
+    </select>
+<!--  根据传入的论文需求对象来更新  -->
+    <update id="update" parameterType="com.starzyn.entity.Require">
+        UPDATE `require` set
+        require_subject=#{requireSubject},
+        requires=#{requires},
+        start_time=#{startTime},
+        end_time=#{endTime},
+        model_path=#{modelPath}
+        where require_id=#{requireId};
+    </update>
+</mapper>

@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Administrator
-  Date: 2020/5/21
-  Time: 16:12
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!--头部信息-->
 <header class="lyear-layout-header">
@@ -24,13 +17,13 @@
             <ul class="topbar-right">
                 <li class="dropdown dropdown-profile">
                     <a href="javascript:void(0)" data-toggle="dropdown">
-                        <img class="img-avatar img-avatar-48 m-r-10" src="../images/users/avatar.jpg" alt=${s.studentName} />
+                        <img class="img-avatar img-avatar-48 m-r-10" src=${s.userImg} />
                         <span>${s.studentName} <span class="caret"></span></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li> <a href="studentInf.html"><i class="mdi mdi-account"></i> 个人信息</a> </li>
-                        <li> <a href="../password_2.html"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
-                        <li> <a href="lyear_pages_login.html"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
+                        <li> <a href="${pageContext.request.contextPath}/student/studentInf.jsp"><i class="mdi mdi-account"></i> 个人信息</a> </li>
+                        <li> <a href="${pageContext.request.contextPath}/password1.jsp"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
+                        <li> <a href="${pageContext.request.contextPath}/student/logout.action"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
                     </ul>
                 </li>
                 <!--切换主题配色-->

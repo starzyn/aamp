@@ -7,6 +7,7 @@
  */
 package com.starzyn.entity;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Paper {
@@ -16,7 +17,7 @@ public class Paper {
     private String paperPath;//varchar(50) NULL论文存放路径
     private String paperType;//varchar(50) NULL论文类型
     private int paperId;//int(11) NOT NULL
-    private LocalTime submitTime;//timestamp NULL论文提交时间
+    private LocalDate submitTime;//timestamp NULL论文提交时间
 
     @Override
     public String toString() {
@@ -79,11 +80,11 @@ public class Paper {
         this.paperId = paperId;
     }
 
-    public LocalTime getSubmitTime() {
+    public LocalDate getSubmitTime() {
         return submitTime;
     }
 
-    public void setSubmitTime(LocalTime submitTime) {
+    public void setSubmitTime(LocalDate submitTime) {
         this.submitTime = submitTime;
     }
 }

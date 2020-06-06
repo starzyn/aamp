@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starzyn.dao.TeacherRequireDao">
+    <select id="queryByTid" parameterType="int" resultType="java.lang.Integer">
+        SELECT require_id from teacher_require where teacher_id=#{tid};
+    </select>
+    <insert id="add">
+        INSERT INTO `teacher_require`(require_id,teacher_id) VALUES(#{rid},#{tid});
+    </insert>
+</mapper>

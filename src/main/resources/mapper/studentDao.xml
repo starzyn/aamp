@@ -2,6 +2,126 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starzyn.dao.StudentDao">
+<!-- 查询所有需求   -->
+    <select id="queryRequire" resultType="com.starzyn.entity.Require">
+        select require_id,require_subject,requires,start_time,end_time,model_path
+        from `require`
+        where require_id in (
+            select require_id
+            from teacher_require
+            where teacher_id in (
+                select teacher_id
+                from student_manager
+                where student_id=#{sid}
+            )
+        );
+    </select>
+<!-- 查询论文详情   -->
+    <select id="queryPaperDetail" resultType="com.starzyn.dto.PaperDetail">
+        select
+        p.paper_path,
+        p.paper_title,
+        p.paper_type,
+        t.teacher_name,
+        r.start_time,
+        r.end_time,
+        c.check_status,
+        c.check_content
+        from paper p,teacher t,teacher_require tr,`require` r,`check` c,check_manager cm
+        where p.paper_id = #{pid}
+        and tr.teacher_id = t.teacher_id
+        and tr.require_id = r.require_id
+        and cm.teacher_id = t.teacher_id
+        and cm.student_id = #{sid}
+        and cm.check_id = c.check_id
+        and t.teacher_id = (select teacher_id from paper_manager where paper_id=#{pid} and student_id=#{sid});
+    </select>
+<!-- 根据学生id来查询论文审核状态   -->
+    <select id="queryPaperCheck" parameterType="int" resultType="com.starzyn.dto.PaperCheck">
+        select p.paper_id,p.paper_subject,p.paper_title,p.paper_type,t.teacher_name,r.start_time,r.end_time,c.check_status from
+        student_manager sm,
+        teacher_require tr,
+        paper_manager pm,
+        teacher t,
+        paper p,
+        `require` r,
+        check_manager cm,
+        `check` c
+        where sm.student_id=#{sid}
+        and sm.teacher_id=tr.teacher_id
+        and tr.teacher_id=pm.teacher_id
+        and cm.teacher_id=sm.teacher_id
+        and tr.require_id = r.require_id
+        and t.teacher_id = sm.teacher_id
+        and t.teacher_id = tr.teacher_id
+        and pm.student_id = #{sid}
+        and pm.paper_id = p.paper_id
+        and cm.check_id = c.check_id
+        and cm.student_id = #{sid}
+        and tr.teacher_id in
+        (select teacher_id from student_manager where student_id=#{sid});
+    </select>
+<!--  插入评语管理  -->
+    <insert id="addCheckManager">
+        INSERT INTO `check_manager`(teacher_id,student_id,check_id) VALUES(#{tid},#{sid},#{cid});
+    </insert>
+<!--  插入评语  -->
+    <insert id="addCheck" parameterType="com.starzyn.entity.Check" useGeneratedKeys="true" keyProperty="checkId">
+        INSERT INTO `check`(check_status,check_content) VALUES(#{checkStatus},#{checkContent});
+    </insert>
+<!--   插入学生论文管理表的数据 -->
+    <insert id="addStuPaper">
+        INSERT INTO paper_manager(student_id,paper_id,teacher_id) VALUES(#{sid},#{pid},#{tid});
+    </insert>
+<!--   插入论文 -->
+    <insert id="addPaper" parameterType="com.starzyn.entity.Paper" useGeneratedKeys="true" keyProperty="paperId">
+        INSERT INTO paper(paper_subject,paper_title,author,paper_path,paper_type,submit_time) VALUES(#{paperSubject},#{paperTitle},#{author},#{paperPath},#{paperType},#{submitTime});
+    </insert>
+<!--   更新论文 -->
+    <update id="updatePaper" parameterType="com.starzyn.entity.Paper">
+        UPDATE paper set paper_subject=#{paperSubject},paper_title=#{paperTitle},author=#{author},paper_path=#{paperPath},paper_type=#{paperType},submit_time=#{submitTime} where paper_id=#{paperId};
+    </update>
+<!--  查询论文  -->
+    <select id="queryPaperById" resultType="com.starzyn.entity.Paper">
+        SELECT paper_subject,paper_title,author,paper_path,paper_type,Paper_id,submit_time from paper where paper_id=#{pid};
+    </select>
+<!--  查询论文id  -->
+    <select id="queryPaperId" resultType="java.lang.Integer">
+        SELECT paper_id from paper_manager where teacher_id=#{tid} and student_id=#{sid};
+    </select>
+    <select id="querySubjects" parameterType="int" resultType="com.starzyn.dto.SubjectList">
+        select r.require_subject,tr.teacher_id
+        from teacher_require tr,`require` r
+        where tr.require_id = r.require_id
+        and tr.teacher_id in (
+            select teacher_id
+            from student_manager sm
+            where sm.student_id=#{sid});
+    </select>
+
+    <update id="updateStudentById" parameterType="com.starzyn.entity.Student">
+            UPDATE student set
+            student_username=#{studentUsername},
+            student_password=#{studentPassword},
+            student_sex=#{studentSex},
+            remark=#{remark},
+            user_img=#{userImg},
+            school=#{school},
+            acdemic=#{acdemic},
+            major=#{major},
+            class_num=#{classNum},
+            student_num=#{studentNum},
+            student_name=#{studentName}
+            where student_id=#{studentId};
+    </update>
+    
+    <update id="updatePwd" parameterType="com.starzyn.entity.Student">
+        update student set student_password=#{studentPassword} where student_username=#{studentUsername};
+    </update>
+
+    <insert id="addStudent" parameterType="com.starzyn.entity.Student">
+        INSERT INTO student(student_username,student_password) VALUES(#{studentUsername},#{studentPassword});
+    </insert>
 
     <sql id="stuInfo">student_id,student_username,student_password,student_sex,remark,user_img,school,acdemic,major,class_num,student_num,student_name </sql>
 
